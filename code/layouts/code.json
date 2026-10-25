@@ -1,0 +1,32 @@
+{
+  "id": "root",
+  "type": "column",
+  "titlebar": "none",
+  "background": "#1e1e1e",
+  "colors": { "background": "#1e1e1e", "terminal_foreground": "#cccccc", "border": "#2b2b2b", "accent": "#007acc" },
+  "terminal_padding": [10, 6],
+  "children": [
+    { "id": "bar", "type": "block", "size": { "px": 34 }, "window_drag": true, "content": { "mod": "vsc", "props": { "role": "bar" } } },
+    {
+      "id": "body", "type": "row", "resizable": false,
+      "children": [
+        { "id": "activity", "type": "block", "size": { "px": 48 }, "content": { "mod": "vsc", "props": { "role": "activity" } } },
+        { "id": "explorer", "type": "block", "size": { "px": 250 }, "content": { "mod": "vsc", "props": { "role": "explorer" } } },
+        {
+          "id": "work", "type": "column", "resizable": false,
+          "children": [
+            { "id": "editor", "type": "block", "size": { "weight": 1 }, "content": { "mod": "vsc", "props": { "role": "editor" } } },
+            { "id": "panel-head", "type": "block", "size": { "px": 34 }, "content": { "mod": "vsc", "props": { "role": "panel" } } },
+            {
+              "id": "main", "type": "block", "size": { "weight": 1.25 }, "background": "#1e1e1e",
+              "content": { "tab": "active", "pane": { "gap": 0, "radius": 0, "background": "#1e1e1e",
+                "border": { "width": 1, "color": "#2b2b2b" }, "focus": { "width": 1, "color": "#2b2b2b" },
+                "header": { "content": { "mod": "pane" }, "height": 26, "position": "top", "reveal": "always" } } }
+            }
+          ]
+        }
+      ]
+    },
+    { "id": "status", "type": "block", "size": { "px": 24 }, "content": { "mod": "vsc", "props": { "role": "status" } } }
+  ]
+}
