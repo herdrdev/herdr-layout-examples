@@ -2,51 +2,94 @@
 
 Your agents as a herd of sheep in a meadow. Working sheep wander, idle ones
 graze, finished ones sleep, and one that needs you jumps with a bubble over
-its head. Click a sheep to open its terminals in the workshed below.
+its head. Click a sheep and its terminals open in the workshed below.
 
 ![Pasture](preview.png)
 
-## What's in here
+This file is the brief: enough to build Pasture from an empty folder. The
+files next to it are one build of it. If they don't work on your Herdr, or you
+want it different, build it again from here.
 
-- `layouts/pasture.json`: the window. The pasture on top (85% of the height),
-  a wooden rail with the active space and tab, then the active tab's
-  terminals in wood-framed panes. Light `paper` theme with warm colors.
-- `mods/pasture/`: one mod that draws three things, picked by
-  `props().role`:
-  - no role: the meadow, the sign with the space's name, the counts
-    (wandering, need you, resting) and one sheep per agent;
-  - `rail`: the strip under the fence, `space / tab` and "THE WORKSHED";
-  - `pane`: each terminal's header, the program's icon, name and status.
-  - `meadow.svg`, `sheep.svg`, `graze.svg`, `sleep.svg`: the art.
+## What you see
 
-## How it was built
+Three bands, top to bottom, filling the window (no title bar):
 
-1. Started from an empty column layout: a block for the pasture, a 29px
-   block for the rail, and the active tab's panes with the pasture mod as
-   their header (`"header": { "content": { "mod": "pasture", "props": { "role": "pane" } } }`).
-2. The meadow is one SVG stretched over the block; the sign, title and
-   counts are plain text on top of it.
-3. Each agent from `agents()` is a sheep, placed in two rows of five. Its
-   status picks the drawing: `working` and `blocked` stand (`sheep.svg`),
-   `done` sleeps (`sleep.svg`) with a "zzz", anything else grazes
-   (`graze.svg`). The program's icon hangs on a little yellow tag.
-4. Motion: a 4.2s timer nudges working sheep left and right and
-   `.transition("left")` eases them there; `blocked` sheep bounce with
-   `.loop("top")`; grazing ones bob slowly.
-5. Clicking a sheep runs `agent.focus` with its terminal, so its space and
-   tab open in the workshed.
-6. `setAgentOrder` keeps the app's agent order (and the keys that walk it)
-   the same as the order of the sheep.
+1. **The pasture**, about 45% of the height. A sky-to-grass meadow with hills,
+   clouds, a sun and a wooden fence along the bottom edge.
+   - Top left: "The pasture" (30px, extra bold) and under it "9 sheep, one
+     happy herd." with the real count.
+   - Left: a wooden sign on a post, "WELCOME TO" and the active space's name.
+   - Top right: three counts, "3 wandering", "1 need you", "2 resting".
+   - One sheep per agent, in two rows of five, each with the agent's tab name
+     under it and the agent's program icon on a small yellow tag at its neck.
+2. **The rail**, 29px of wood (`#ab7748`): "space / tab" on the left in cream,
+   "THE WORKSHED" on the right.
+3. **The workshed**, the rest: the active tab's terminals side by side on
+   wood, each in a cream pane (`#fff9e9`) with a thick dark wood frame
+   (`#8b5e37`, 4px) and a tan header (`#ceab78`, 28px) showing the program's
+   icon, its name, and its status on the right ("needs you" for blocked).
 
-## What it assumes
+Colors: light, warm, cartoon. Ink `#414b34`, wood `#ab7748`, sign `#d2a673`,
+tags `#f4cc68`. Text in Geist.
 
-- Only the app's built-in API: `agents`, `spaces`, `panes`, `props`, `run`,
-  `setAgentOrder`. No other mods.
-- Ten agents fit (two rows of five). More overlap; add a third row if you
-  run more.
-- Its own colors in the layout file. It ignores your `settings.json` theme
-  on purpose; delete `theme` and `colors` from the layout to use yours.
-- No `mods/pasture/` or `layouts/pasture.json` of your own. If you have
-  one, rename this one (the mod's folder, its paths in `main.js`, and the
-  `mod` names in the layout).
+## How it behaves
 
+Every sheep shows its agent's status:
+
+| Status | Drawing | Motion | Extra |
+| --- | --- | --- | --- |
+| working | standing sheep | drifts left and right, eased over ~4s | |
+| blocked (needs you) | standing sheep | bounces up and down, fast | a bubble above: "! Claude Code" in orange |
+| done | sleeping sheep, lying down | none | "zzz" beside it |
+| idle | grazing sheep, head down | bobs slowly | |
+
+- Clicking a sheep focuses that agent: its space and tab become active, so its
+  terminals fill the workshed and the rail and sign update.
+- The counts and the sign follow the agents live.
+- The app's "next agent" keys walk the sheep in the order they stand.
+
+## Built from
+
+- **The layout file** (`layouts/pasture.json`): a root `column` with
+  `"titlebar": "none"`, its own `theme` (`paper`) and `colors`, then three
+  children: a `block` showing the mod (`size: { weight: 0.85 }`), a `block`
+  showing the mod with `props: { role: "rail" }` (`size: { px: 29 }`), and a
+  `block` with `content: { tab: "active", pane: { … } }` for the terminals,
+  whose `pane.header` is the same mod with `props: { role: "pane" }`.
+- **One mod** (`mods/pasture/`) that draws all three parts, picked by
+  `props().role`: none for the pasture, `rail`, or `pane` (it also gets
+  `props().pane` to find its terminal in `panes()`).
+- **Data:** `agents()` for the herd (status, program, tab name, address),
+  `spaces()` for the active space and tab, `panes()` for the pane headers.
+- **Commands:** `run("agent.focus", { terminal })` on click,
+  `setAgentOrder(addresses)` on every render.
+- **Motion:** `.transition("left", …)` for the drifting, `.loop("top", …)`
+  for bouncing and bobbing. A timer every ~4s only moves the drift target.
+- **Art:** four SVGs, the meadow and three sheep poses (standing, grazing,
+  sleeping), drawn flat with simple shapes. The program icon comes from the
+  agent's `program.icon` (tint it when `program.tint` is set).
+
+## Watch out
+
+- Animate natively. Let `.transition` and `.loop` do the moving; never redraw
+  on a fast timer to animate. The drift timer changes data, not frames.
+- Sheep positions are fixed pixels tuned for a window about 1400px wide.
+  Mods don't know their block's size, so on a narrow window the right column
+  runs off the edge; use fewer per row or smaller sheep if you need it.
+- Ten sheep fit. Plan a third row if you run more agents.
+- Key sheep by the agent's address, not its index, or they swap places when
+  an agent starts or ends.
+- Asset paths are `mods/pasture/…`. Renaming the mod's folder means renaming
+  those paths and the `mod` names in the layout.
+- The layout brings its own colors and ignores the person's theme. Drop
+  `theme` and `colors` from it to follow theirs.
+
+## Done when
+
+- Every agent is a sheep with its tab name, and the counts add up.
+- Changing an agent's status changes its sheep within a moment: a stuck agent
+  bounces with its bubble, a finished one falls asleep.
+- Clicking a sheep shows its terminals in the workshed, and the rail and the
+  sign name its space and tab.
+- `herdr-app check mods/pasture` passes, and switching to another layout and
+  back works.
