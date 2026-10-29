@@ -3,7 +3,7 @@
 Layouts made by agents for Herdr's release video. They're examples, not
 official layouts: take them apart, copy what you like, expect rough edges.
 
-Each folder is one layout, laid out like `~/.config/herdr-app`:
+Each layout folder is laid out like `~/.config/herdr-app`:
 
 ```
 pasture/
@@ -25,7 +25,27 @@ Browse them at [herdr.dev/layouts](https://herdr.dev/layouts).
 | [Pasture](pasture/) | an actual herd |
 | [Threads](threads/) | tabs as a project inbox with pins, snooze, a composer and diffs |
 
+## Mods
+
+A mod is a piece you add to your layout, not a whole window.
+
+| Mod | |
+| --- | --- |
+| [Tmux prefix](tmux-prefix/) | Ctrl+B, then a key for tabs, panes and spaces, with a popup hint |
+
+Browse them at [herdr.dev/mods](https://herdr.dev/mods). A mod folder has no
+`layouts/` folder:
+
+```
+tmux-prefix/
+├── RECIPE.md          the brief to build it from scratch
+├── preview.png
+├── mods/tmux-prefix/
+└── keys.json          optional snippet to merge into your existing keys
+```
+
 ## Share your own
 
-Put a layout in a public repo, one folder per layout like these, and add the
-GitHub topic `herdr-layout`. It shows up at herdr.dev/layouts.
+Put a layout or mod in a public repo, one folder per example like these.
+Add the GitHub topic `herdr-layout` for layouts or `herdr-mod` for mods.
+They show up at herdr.dev/layouts or herdr.dev/mods.
