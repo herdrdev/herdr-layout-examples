@@ -153,6 +153,7 @@ export default class Details extends View {
     if (!this.git) this.refresh(cx);
     const g = this.git;
     const cwd = this.folder();
+    const on = g?.on ?? spaces().find((s) => s.active)?.machine;
     const changed = g?.root && g.files > 0;
     return v_flex()
       .id("t4-details")
